@@ -69,7 +69,3 @@ if (chambered) { }       /* works as bool */
 ## Editor Integration
 Custom property drawers for all vector types, quat (displayed as Euler angles), and btoi (toggle).
 No extra setup — just attach a script and see clean vectors in the Inspector.
-
-## [[LICENSE]]
-
-
