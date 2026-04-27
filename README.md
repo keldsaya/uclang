@@ -66,7 +66,7 @@ string savePath = app_persis_data + "/save.dat";
 
 ## Setup
 
-1. Copy the `include/` folder into your Unity project's `Assets/Scripts/`
+1. Copy the source folder into your Unity project's `Assets/uclang`
 2. **IMPORTANT**: Enable unsafe code
    - Go to `Edit` → `Project Settings` → `Player` → `Other Settings`
    - Check `Allow 'unsafe' Code`
