@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace include.math_h {
+namespace include.math {
   [Serializable]
   public struct vec3 : IEquatable<vec3>, IFormattable {
     public float x, y, z;
@@ -29,7 +29,7 @@ namespace include.math_h {
     public static vec3 cross(vec3 a, vec3 b) => new vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
     public static float dist(vec3 a, vec3 b) => (a - b).mag();
     public static vec3 lerp(vec3 a, vec3 b, float t) {
-        t = math.clamp01(t);
+        t = h.clamp01(t);
         return new vec3(
             a.x + (b.x - a.x) * t,
             a.y + (b.y - a.y) * t,

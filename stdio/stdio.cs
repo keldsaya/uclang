@@ -2,8 +2,8 @@ using System;
 using System.Text;
 using UnityEngine;
 
-namespace include.stdio_h {
-  public static class stdio {
+namespace include.stdio {
+  public static class h {
     public static void printf(string str, params object[] args) {
       if (string.IsNullOrEmpty(str)) return;
 

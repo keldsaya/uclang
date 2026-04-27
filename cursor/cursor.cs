@@ -1,12 +1,12 @@
 using UnityEngine;
-namespace include.cursor_h {
-  public enum cur_lock_mode {
+namespace include.cursor {
+  public enum cur_lock_mode_t {
     none, locked, confined
   }
-  public static class cursor {
-    public static bool visible => Cursor.visible;
-    public static cur_lock_mode state {
-      get => (cur_lock_mode)Cursor.lockState;
+  public static class h {
+    public static bool cur_visible => Cursor.visible;
+    public static cur_lock_mode_t cur_state {
+      get => (cur_lock_mode_t)Cursor.lockState;
       set => Cursor.lockState = (CursorLockMode)value;
     }
   }
