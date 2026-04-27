@@ -1,71 +1,127 @@
 # uclang
-Unity C Language — a lightweight, C-style framework layer for Unity that brings familiar low-level idioms into C# game development without sacrificing the Unity ecosystem.
+
+**A Unity C# framework that makes game development feel like C.**
+
+> *"Real programmers use unsafe code and like it."*
 
 ## Philosophy
 
-uclang is not a new language — it's a syntactic and semantic overlay built with C# structs, static utilities, and custom drawers. It lets you write game logic that feels like C, while running natively inside Unity.
+This framework doesn't try to hide what's happening. No abstractions, no magic, no "design patterns" that add 17 layers between you and your game logic. Just functions, pointers, and structs that actually make sense.
 
-> No wrappers for the sake of wrappers. Every include has a purpose.
+- **Explicit over clever** - You want a string copy? Here's `strcpy` with actual pointers.
+- **No allocations for the sake of it** - Use `snprintf` to build strings, not string concatenation that allocates every time.
+- **C semantics** - `btoi` works like a real boolean-int. `true`, `false`, `1`, `0` — it's all the same.
+- **Unity when you need it** - But wrapped in types that don't make you vomit. `vec3`, not `Vector3`. `quat`, not `Quaternion`.
+- **Editor support** - Because even C programmers need nice inspectors.
 
-## Core Modules
+## What's Inside
 
-### `include.math_h`
-C-style math utilities, vector/Quaternion types with implicit conversions to Unity types.
+### Math (`include.math`)
+```csharp
+vec3 pos = new vec3(10, 5, 2);
+vec3 dir = (target - pos).normalized();
+float dist = vec3.dist(pos, target);
 
-| Type | Description |
-|------|-------------|
-| `vec2`, `vec3` | Float vectors with `.mag()`, `.normalized()`, `dot`, `cross`, `lerp` |
-| `vec2i`, `vec3i` | Integer vectors, convertible to `Vector2Int` / `Vector3Int` |
-| `quat` | Quaternion with `.euler_angles`, `look_rotation`, `angle_axis`, operators |
-| `math` | `min`, `max`, `clamp`, `clamp01`, `lerp`, `inv_lerp`, `step`, `pow`, `sin`, `cos`, `sqrt`, `abs`, `round` |
-| `btoi` | Boolean-integer hybrid — implicitly converts to/from `bool` and `int`, supports `true`/`false` operators |
+// Or do it the old way
+float t = min(max((val - minVal) / (maxVal - minVal), 0f), 1f);
 
-### `include.stdio_h`
-Debug output with C printf style.
-```
-stdio.printf("Hello %s", "world!");
-```
-
-### `include.time_h`
-Unity Time wrapped in C-style static properties.
-```
-float dt = time.delta;
-float now = time.val;
-time.scale = 0.5f;
+btoi isAlive = 1;    // true
+btoi isDead = false; // 0
+if (isAlive && !isDead) { /* ... */ }
 ```
 
-### `include.input_h`
-Raw input access.
-```
-if (input.key_down(KeyCode.R))
-if (input.mouse(0))
-float strafe = input.axis("Horizontal");
-```
-### `include.cursor_h`
-Cursor state management.
-```
-cursor.state = cur_lock_mode.locked;
-bool vis = cursor.visible;
+### Input (`include.input`)
+```csharp
+if (input_key_down(KeyCode.Space)) {
+    // jump
+}
+
+float horiz = input_axis_raw("Horizontal");  // no smoothing, just raw
 ```
 
-### `include.app_h`
-Application context.
-```
-if (app.is_playing && app.is_focus)
-string savePath = app.persis_data;
-```
-
-## Custom Data Types
-### `btoi`
-
-A boolean that acts like an integer in expressions. Useful for low-level state flags.
-```
-btoi chambered = false;
-chambered = 1;           /* true */
-int value = chambered;   /* 1 */
-if (chambered) { }       /* works as bool */
+### Console I/O (`include.stdio`)
+```csharp
+printf("Player %d at position %f, %f, %f", id, pos.x, pos.y, pos.z);
+string msg = snprintf("Health: %d/%d", current, max);
 ```
 
-## Editor Integration
-Custom property drawers for all vector types, quat (displayed as Euler angles), and btoi (toggle).
-No extra setup — just attach a script and see clean vectors in the Inspector.
+### Quaternions (`include.math`)
+```csharp
+quat rotation = quat.euler(0, 90, 0);
+quat lookAt = quat.look_rotation(forward, up);
+vec3 rotatedPoint = lookAt * somePoint;
+```
+
+### Cursor Control (`include.cursor`)
+```csharp
+cur_state = cur_lock_mode_t.locked;  // FPS style
+cur_visible = false;
+```
+
+### Application Info (`include.app`)
+```csharp
+if (app_is_focus) { /* game is in foreground */ }
+string savePath = app_persis_data + "/save.dat";
+```
+
+## Setup
+
+1. Copy the `include/` folder into your Unity project's `Assets/Scripts/`
+2. **IMPORTANT**: Enable unsafe code
+   - Go to `Edit` → `Project Settings` → `Player` → `Other Settings`
+   - Check `Allow 'unsafe' Code`
+
+## Why?
+
+Unity's C# APIs are fine. But sometimes you just want to write:
+
+```csharp
+vec3 velocity = velocity + gravity * time_delta;
+```
+
+Instead of:
+
+```csharp
+Vector3 velocity = velocity + Physics.gravity * Time.deltaTime;
+```
+
+And sometimes you want a boolean that acts like an integer because you're porting from C and you don't want to rewrite everything.
+
+This framework is for:
+- Game jammers who want to move fast
+- C programmers forced to use Unity
+- Anyone tired of `Mathf`, `Vector3.Distance`, and `Time.deltaTime` being in different namespaces
+- People who think `using static` is a band-aid for a broken API
+
+## Types
+
+| Framework | Unity | Note |
+|-----------|-------|------|
+| `vec2` | `Vector2` | Float vector |
+| `vec3` | `Vector3` | Float vector |
+| `vec2i` | `Vector2Int` | Integer vector |
+| `vec3i` | `Vector3Int` | Integer vector |
+| `quat` | `Quaternion` | Rotation |
+| `btoi` | `bool` | But acts like int too |
+
+## Editor Support
+
+All custom types have PropertyDrawers. They show up in the inspector exactly like their Unity counterparts.
+
+- `vec2` → Vector2 field
+- `vec3` → Vector3 field  
+- `quat` → Euler angles (because who edits quaternions directly?)
+- `btoi` → Toggle
+
+## Notes
+
+- The `strcpy` function uses actual unsafe pointers. Be careful.
+- `strlen` takes a managed string but fixes it in memory. Works fine.
+- `printf` outputs to `Debug.Log` — you're still in Unity land.
+- Yes, `time_fixed_delta` has a setter. Change physics timestep at runtime.
+
+---
+
+*"C is quirky, flawed, and an enormous success."* — Dennis Ritchie
+
+*This framework is too.*

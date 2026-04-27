@@ -1,6 +1,6 @@
 using System;
 
-namespace include.math_h {
+namespace include.math {
   [Serializable]
   public struct btoi {
     [UnityEngine.SerializeField] private bool _val;

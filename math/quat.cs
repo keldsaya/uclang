@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using UnityEngine;
-namespace include.math_h {
+namespace include.math {
   [Serializable]
   public struct quat : IEquatable<quat>, IFormattable {
     public float x, y, z, w;

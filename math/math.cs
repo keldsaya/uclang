@@ -1,7 +1,7 @@
 using System;
 
-namespace include.math_h {
-  public static class math {
+namespace include.math {
+  public static class h {
     public static float min(float a, float b) => (a < b) ? a : b;
     public static int min(int a, int b) => (a < b) ? a : b;
 

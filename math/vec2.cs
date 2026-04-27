@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using UnityEngine;
 
-namespace include.math_h {
+namespace include.math {
   [Serializable]
   public struct vec2 : IEquatable<vec2>, IFormattable {
     public float x, y;
