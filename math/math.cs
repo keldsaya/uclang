@@ -15,6 +15,8 @@ namespace include.math {
     public static float sin(float v) => (float)Math.Sin(v);
     public static float cos(float v) => (float)Math.Cos(v);
 
+    public static int ftoi(float v) => (int)Math.Floor(v);
+
     public static float step(float edge, float x) => x < edge ? 0f : 1f;
 
     public static float lerp(float a, float b, float t) => a + (b - a) * clamp01(t);
