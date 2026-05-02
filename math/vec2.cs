@@ -44,6 +44,8 @@ namespace include.math {
       $"({x.ToString(format, formatProvider ?? CultureInfo.InvariantCulture)}, {y.ToString(format, formatProvider ?? CultureInfo.InvariantCulture)})";
 
     public static implicit operator Vector2(vec2 v) => new Vector2(v.x, v.y);
+    public static implicit operator Vector3(vec2 v) => new Vector3(v.x, v.y, 0);
     public static implicit operator vec2(Vector2 v) => new vec2(v.x, v.y);
+    public static implicit operator vec3(vec2 v) => new vec3(v.x, v.y, 0);
   }
 }
